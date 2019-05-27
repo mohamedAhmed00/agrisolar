@@ -1,0 +1,14 @@
+{
+    "name": "Pumps",
+    "alias": "pumps",
+    "description": "",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "Modules\\Pumps\\Providers\\PumpsServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

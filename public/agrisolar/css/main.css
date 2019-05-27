@@ -1,0 +1,74 @@
+header
+{
+    padding: 1rem;
+}
+header span
+{
+    font-size: .8rem !important;
+    background: #CCC;
+    display: block;
+    text-align: center;
+    padding: .5rem 0;
+    margin-bottom: .1rem;
+    border-top-left-radius: 20px;
+}
+
+.search
+{
+    padding: 1rem;
+    border: solid 1px #CCC;
+}
+
+.login
+{
+    margin-top: 5rem;
+}
+
+.login form
+{
+    border: solid 1px #28a745!important;
+    padding: 1rem;
+}
+
+.login form input
+{
+    border-color: #28a745;
+}
+footer
+{
+    position: fixed;
+    bottom: 0;
+}
+.register-new-account
+{
+    color: #000;
+}
+.register-new-account:hover
+{
+    color: #28a745;
+    text-decoration: none;
+}
+
+#navbarSupportedContent
+{
+    direction: rtl;
+}
+#navbarSupportedContent li
+{
+    direction: ltr
+}
+header a:hover
+{
+    text-decoration: none;
+}
+
+header .table
+{
+    background: #2aa02b;
+    color: #FFF;
+    border: none;
+}
+header .table *
+{
+    border: none;
+}
