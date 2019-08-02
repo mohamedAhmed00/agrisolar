@@ -1,5 +1,7 @@
 @php
     $admin = getAdmin();
+    $data = getHomeCounts();
+
 @endphp
 <!DOCTYPE html>
 <html>
@@ -145,24 +147,26 @@
                         <div class="report-today">
                             <h5>All Actions</h5>
                             <ul>
-                                <li><span>7<i>Products</i></span></li>
-                                <li><span>5<i>Pages</i></span></li>
-                                <li><span>1<i>Contact</i></span></li>
+                                <li><span>{{ $data['pumps'] }}<i>Pumps</i></span></li>
+                                <li><span>{{ $data['users'] }}<i>Users</i></span></li>
+                                <li><span>{{ $data['cities'] }}<i>Cities</i></span></li>
                             </ul>
                         </div>
                     </div>
                     <ul class="sidebar-menu">
                         <li class="header">MAIN MENU</li>
                         <li class="treeview active"><a href="{{ url('_admin_/base') }}"><i class="fa fa-home"></i> <span>Dashboard</span></a></li>
+                        <li class="treeview"><a href="{{ url('_admin_/city') }}"><i class="fa fa-location-arrow"></i> <span>Cities</span></a></li>
 
                         @can('view', Modules\Pumps\Entities\Pump::class)
-                            <li class="treeview active"><a href="{{ url('_admin_/pumps') }}"><i class="fa fa-bookmark"></i> <span>Pumps</span></a></li>
+                            <li class="treeview"><a href="{{ url('_admin_/pumps') }}"><i class="fa fa-bookmark"></i> <span>Pumps</span></a></li>
                         @endcan
+                        <li class="treeview "><a href="{{ url('_admin_/module') }}"><i class="fa fa-caret-square-o-left"></i> <span>Modules</span></a></li>
                         @can('view', \Modules\Setting\Entities\Setting::class)
                             <li class="treeview"><a href="{{ url('_admin_/setting') }}"><i class="fa fa-wrench"></i> <span>Website Setting</span></a></li>
                         @endcan
                         @can('view', \Modules\Groups\Entities\Group::class)
-                            <li class="treeview"><a href="{{ url('_admin_/groups') }}"><i class="fa fa-user"></i> <span>USER GROUPS</span></a></li>
+                            <li class="treeview"><a href="{{ url('_admin_/groups') }}"><i class="fa fa-user"></i> <span>User Groups</span></a></li>
                         @endcan
                         @can('view', \Modules\Users\Entities\User::class)
                             <li class="treeview"><a href="{{ url('_admin_/users') }}"><i class="fa fa-user"></i> <span>Website Admins</span></a></li>
@@ -220,6 +224,27 @@
             </div>
             <!-- /.modal-dialog -->
         </div>
+
+
+        <div class="modal modal-danger fade" id="modal-danger-error">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Error in Action ( Action Not Completed )</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>{{ session()->get('error') }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
         <script src="{{ asset('vendor/jQuery/jquery-2.2.3.min.js') }}"></script>
         <script src="{{ asset('vendor/jquery-fullscreen/jquery.fullscreen-min.js') }}"></script>
         <script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
@@ -238,6 +263,10 @@
             @endif
             @if(session()->has('successful'))
                 $("#modal-success").modal('show');
+            @endif
+
+            @if(session()->has('error'))
+                $("#modal-danger-error").modal('show');
             @endif
 
             $('.confirm').hide();
@@ -263,6 +292,7 @@
         </script>
         @php
             \request()->session()->forget('successful');
+            \request()->session()->forget('error');
         @endphp
     </body>
 </html>

@@ -19,7 +19,10 @@
         table * {
             text-align: center;
         }
-
+        table
+        {
+            font-size: 12px;
+        }
     </style>
     <section class="content">
         <div class="row">
@@ -49,7 +52,6 @@
                                 <th class="text-center">Q Max <br> <span> ( Calc. )</span></th>
                                 <th class="text-center">P Min <br><br> <span></span></th>
                                 <th class="text-center">P Max <br><br> <span></span></th>
-                                <th class="text-center">Created At <br><br> <span></span></th>
                                 @can('view', Modules\Pumps\Entities\HeightPumps::class)
                                     <th class="text-center">Graph <br><br> <span></span></th>
                                 @endcan
@@ -81,8 +83,7 @@
                                     <td class="text-center">{{ $heightPump->q_max }}</td>
                                     <td class="text-center">{{ $heightPump->p_min }}</td>
                                     <td class="text-center">{{ $heightPump->p_max }}</td>
-                                    <td class="text-center">{{ $heightPump->created_at->diffForHumans() }}</td>
-                                    @can('view', Modules\Pumps\Entities\HeightPumps::class)
+                                   @can('view', Modules\Pumps\Entities\HeightPumps::class)
                                         <td class="text-center">
                                             <button type="button" class="btn btn-primary btn-sm"
                                                     onclick="showGraph('{{ $heightPump->points }}')"><i

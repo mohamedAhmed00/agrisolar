@@ -15,5 +15,7 @@ class Pump extends Eloquent
         'model','motor','stages', 'q_min', 'q_max', 'h_min', 'h_max'
     ];
 
-
+    public function Head(){
+        return $this->hasMany(HeightPumps::class);
+    }
 }

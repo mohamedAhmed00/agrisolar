@@ -42,7 +42,8 @@ class BaseController extends Controller
     public function index()
     {
         $users = $this->userRepository->getAll();
-        return view('base::index',compact(['users','serviceCount','unReadMessageCount','allReadMessageCount']));
+        $data = getHomeCounts();
+        return view('base::index',compact(['users','data']));
     }
 
     /**

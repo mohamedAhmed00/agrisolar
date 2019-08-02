@@ -3,6 +3,7 @@
 namespace Modules\Pumps\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class HeightPumpRequest extends FormRequest
 {
@@ -25,7 +26,7 @@ class HeightPumpRequest extends FormRequest
     public function rules()
     {
         return [
-            'head'=>'required|numeric|unique:height_pumps,head,' . $this->id,
+            'head'=> 'required',
             'c0' => 'required|numeric',
             'c1' => 'required|numeric',
             'c2' => 'required|numeric',

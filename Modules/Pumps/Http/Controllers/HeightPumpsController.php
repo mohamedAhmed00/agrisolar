@@ -2,11 +2,11 @@
 
 namespace Modules\Pumps\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
+use Modules\Pumps\Entities\HeightPumps;
 use Modules\Pumps\Http\Requests\HeightPumpRequest;
-use Modules\Pumps\Http\Requests\PumpRequest;
 use Modules\Pumps\Repository\Interfaces\HeightPumpsInterface;
 use Modules\Pumps\Repository\Interfaces\PumpInterface;
 
@@ -28,7 +28,7 @@ class HeightPumpsController extends Controller
      * @param PumpInterface $pumpRepository
      * @author Nader Ahmed
      */
-    public function __construct(HeightPumpsInterface $heightPumpsRepository,PumpInterface $pumpRepository)
+    public function __construct(HeightPumpsInterface $heightPumpsRepository, PumpInterface $pumpRepository)
     {
         $this->heightPumpsRepository = $heightPumpsRepository;
         $this->pumpRepository = $pumpRepository;
@@ -65,6 +65,11 @@ class HeightPumpsController extends Controller
      */
     public function store(HeightPumpRequest $request,int $pump_id)
     {
+        if(count($this->heightPumpsRepository->getWhere(['pump_id' => $pump_id,'head' => $request->get('head')]))  != 0)
+        {
+            \request()->session()->put('error','head must be unique for this pump');
+            return redirect()->back()->withInput();
+        }
         $this->heightPumpsRepository->store(array_merge($request->all(),array('pump_id' => $pump_id)));
         return redirect('_admin_/pumps/add/height/'.$pump_id);
     }
@@ -99,6 +104,11 @@ class HeightPumpsController extends Controller
      */
     public function update(HeightPumpRequest $request,int $pumpHeight_id,int $pump_id)
     {
+        if(count($this->heightPumpsRepository->getWhere(['pump_id' => $pump_id,'head' => $request->get('head')]))  != 0)
+        {
+            \request()->session()->put('error','head must be unique for this pump');
+            return redirect()->back()->withInput();
+        }
         $this->heightPumpsRepository->update($pumpHeight_id,array_merge($request->all(),array('pump_id' => $pump_id)));
         return redirect('_admin_/pumps/add/height/'.$pump_id);
     }

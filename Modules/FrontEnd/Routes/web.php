@@ -9,4 +9,8 @@ Route::get('/logout', 'FrontEndController@logout')->middleware('notAuthCheck');
 Route::get('/profile', 'FrontEndController@getProfile')->middleware('notAuthCheck');
 Route::post('/editProfile', 'FrontEndController@editProfile')->middleware('notAuthCheck');
 
-Route::post('/search', 'FrontEndController@search')->middleware('notAuthCheck');
+Route::get('/search', 'FrontEndController@search')->middleware('notAuthCheck');
+
+Route::post('pump/data','FrontEndController@pumpData');
+Route::post('pump/search','FrontEndController@pumpDataSearch');
+Route::post('pump/search/monthChart','FrontEndController@monthChart');

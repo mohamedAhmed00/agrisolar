@@ -3,14 +3,17 @@
 namespace Modules\FrontEnd\Http\Controllers;
 
 
+use Auth;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Input;
+use Modules\City\Repository\Interfaces\CityInterface;
+use Modules\FrontEnd\Http\Requests\DataRequest;
 use Modules\FrontEnd\Http\Requests\EditRequest;
 use Modules\FrontEnd\Http\Requests\LoginRequest;
+use Modules\FrontEnd\Http\Requests\MonthSearchRequest;
 use Modules\FrontEnd\Http\Requests\RegisterRequest;
 use Modules\FrontEnd\Http\Requests\SearchRequest;
 use Modules\Groups\Repository\Interfaces\GroupInterface;
-use Auth;
 use Modules\Pumps\Repository\Interfaces\PumpInterface;
 use Modules\Users\Repository\Interfaces\UserInterface;
 
@@ -33,13 +36,21 @@ class FrontEndController extends Controller
     protected $pumpRepository;
 
     /**
+     * @var
+     */
+    protected $cityRepository;
+
+    /**
      * ServicesController constructor.
      * @param UserInterface $userRepository
      * @param GroupInterface $groupRepository
+     * @param PumpInterface $pumpRepository
+     * @param CityInterface $cityRepository
      * @author Nader Ahmed
      */
-    public function __construct(UserInterface $userRepository,GroupInterface $groupRepository,PumpInterface $pumpRepository)
+    public function __construct(UserInterface $userRepository, GroupInterface $groupRepository, PumpInterface $pumpRepository, CityInterface $cityRepository)
     {
+        $this->cityRepository = $cityRepository;
         $this->userRepository = $userRepository;
         $this->groupRepository = $groupRepository;
         $this->pumpRepository = $pumpRepository;
@@ -69,7 +80,8 @@ class FrontEndController extends Controller
      */
     public function dashboard()
     {
-        return view('frontend::dashboard');
+        $cities = $this->cityRepository->getAll();
+        return view('frontend::dashboard', compact('cities'));
     }
 
     /**
@@ -94,9 +106,7 @@ class FrontEndController extends Controller
             if (Auth::attempt(['email' => $data['email'], 'password' => $data['password']])) {
                 if ($this->userRepository->checkAuth() === true) {
                     return redirect()->intended('dashboard');
-                }
-                else
-                {
+                } else {
                     Auth::logout();
                     return redirect()->back()->with('unauth', 'You Are An Admin Not Website User, Go To Admin Dashboard To Login');
                 }
@@ -118,7 +128,7 @@ class FrontEndController extends Controller
     {
         $settings = getSetting();
         if (!empty($settings['public user group']->value)) {
-            $user = $this->userRepository->store(array_merge($request->except(['password_confirmation','_token']),['group_id'=>$this->groupRepository->getWhere(['slug' => $settings['public user group']->value])->first()->id]));
+            $user = $this->userRepository->store(array_merge($request->except(['password_confirmation', '_token']), ['group_id' => $this->groupRepository->getWhere(['slug' => $settings['public user group']->value])->first()->id]));
             Auth::attempt(['email' => $user['email'], 'password' => $request->only('password')['password']]);
             return redirect()->intended('dashboard');
         }
@@ -132,7 +142,7 @@ class FrontEndController extends Controller
      */
     public function editProfile(EditRequest $request)
     {
-        $this->userRepository->update(auth()->user()->id,$request->all());
+        $this->userRepository->update(auth()->user()->id, $request->all());
         return redirect()->back()->with('successful', 'Your Profile Is Modified Successfully');
     }
 
@@ -152,7 +162,42 @@ class FrontEndController extends Controller
      */
     public function search(SearchRequest $request)
     {
+        $cities = $this->cityRepository->getAll();
         $pumps = $this->pumpRepository->search($request->all());
-        return view('frontend::dashboard',compact('pumps'))->withInput(Input::all());
+        $inputs = $request->all();
+        return view('frontend::dashboard', compact(['pumps', 'cities', 'inputs']));
+    }
+
+    /**
+     *
+     */
+    public function pumpData(DataRequest $request)
+    {
+        $data = $this->pumpRepository->getChart($request->get('id'));
+        if (null == $data) {
+            return response()->json(['error' => "incorrect data"], 200, []);
+        }
+        return response(['chart' => $data['points'] , 'head' => $data['head'],'month' => $data['month']['points']], 200, []);
+    }
+
+    /**
+     *
+     */
+    public function pumpDataSearch(DataRequest $request)
+    {
+        $data = $this->pumpRepository->getChartWithSearch();
+        if (null == $data) {
+            return response()->json(['error' => "incorrect data"], 200, []);
+        }
+        return response(['chart' => $data], 200, []);
+    }
+
+    public function monthChart(MonthSearchRequest $request)
+    {
+        $data = $this->pumpRepository->getMonthChart($request->get('mounting_structure'),$request->get('id'),$request->get('month'));
+        if (null == $data) {
+            return response()->json(['error' => "incorrect data"], 200, []);
+        }
+        return response(['chart' => $data], 200, []);
     }
 }

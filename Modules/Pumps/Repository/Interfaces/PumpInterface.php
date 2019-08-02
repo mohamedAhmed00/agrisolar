@@ -12,4 +12,17 @@ interface PumpInterface extends BaseInterface
      * @return Mixed
      */
     public function search(array $arg);
+
+    /**
+     * @param int $id
+     * @return Mixed
+     * @author Nader Ahmed
+     */
+    public function getChart(int $id);
+
+    /**
+     * @return Mixed
+     * @author Nader Ahmed
+     */
+    public function getChartWithSearch();
 }

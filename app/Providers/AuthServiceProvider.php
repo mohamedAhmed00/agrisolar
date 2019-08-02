@@ -7,6 +7,7 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 use Modules\Groups\Entities\Group;
 use Modules\Groups\Policies\GroupPolicy;
 use Modules\Pumps\Entities\HeightPumps;
+use Modules\Pumps\Entities\City;
 use Modules\Pumps\Entities\Pump;
 use Modules\Pumps\Policies\PumpHeightPolicy;
 use Modules\Pumps\Policies\PumpPolicy;

@@ -6,6 +6,10 @@
         {
             text-align: center;
         }
+
+        .table>thead>tr>th,.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+            padding: 10px  !important;
+        }
     </style>
     <section class="content-title">
         <h1>
@@ -22,8 +26,8 @@
                 <div class="info-box">
                     <div class="info-box-content">
                         <i class="fa fa-bookmark text-navy"></i>
-                        <div class="text-center value">0</div>
-                        <div class="text-muted text-uppercase text-center text-bold">All Products</div>
+                        <div class="text-center value">{{ $data['pumps'] }}</div>
+                        <div class="text-muted text-uppercase text-center text-bold">Pumps</div>
                     </div>
                 </div>
             </div>
@@ -31,41 +35,41 @@
                 <div class="info-box">
                     <div class="info-box-content">
                         <i class="fa fa-user text-light-blue"></i>
-                        <div class="text-center value">0</div>
-                        <div class="text-muted text-uppercase text-center text-bold">All Admin</div>
+                        <div class="text-center value">{{ $data['users'] }}</div>
+                        <div class="text-muted text-uppercase text-center text-bold">Users</div>
                     </div>
                 </div>
             </div>
             <div class="col-sm-6 col-lg-3">
                 <div class="info-box">
                     <div class="info-box-content">
-                        <i class="fa fa-envelope-o text-maroon"></i>
-                        <div class="text-center value">0</div>
-                        <div class="text-muted text-uppercase text-center text-bold">All Message</div>
+                        <i class="fa fa-location-arrow text-maroon"></i>
+                        <div class="text-center value">{{ $data['cities'] }}</div>
+                        <div class="text-muted text-uppercase text-center text-bold">Cities</div>
                     </div>
                 </div>
             </div>
             <div class="col-sm-6 col-lg-3">
                 <div class="info-box">
                     <div class="info-box-content">
-                        <i class="fa fa-envelope-open-o text-green"></i>
-                        <div class="text-center value">2</div>
-                        <div class="text-muted text-uppercase text-center text-bold">All Unread Message</div>
+                        <i class="fa fa-wrench text-green"></i>
+                        <div class="text-center value">{{ $data['settings'] }}</div>
+                        <div class="text-muted text-uppercase text-center text-bold">Settings</div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="box">
-            <div class="box-header">
-                <h3 class="box-title">website traffic</h3>
-                <div class="box-tools pull-right">
-                    <a href="#" class=" btn-box-tool">View all</a>
-                </div>
-            </div>
-            <div class="box-body">
-                <canvas id="myChart" style="display: block; width: 1200px; height: 280px;" width="1200" height="280"></canvas>
-            </div>
-        </div>
+{{--        <div class="box">--}}
+{{--            <div class="box-header">--}}
+{{--                <h3 class="box-title">website traffic</h3>--}}
+{{--                <div class="box-tools pull-right">--}}
+{{--                    <a href="#" class=" btn-box-tool">View all</a>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--            <div class="box-body">--}}
+{{--                <canvas id="myChart" style="display: block; width: 1200px; height: 280px;" width="1200" height="280"></canvas>--}}
+{{--            </div>--}}
+{{--        </div>--}}
         @can('view', \Modules\Users\Entities\User::class)
             <div class="box">
                 <div class="box-header">

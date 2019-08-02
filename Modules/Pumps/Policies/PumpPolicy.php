@@ -17,6 +17,7 @@ class PumpPolicy
      */
     public function view()
     {
+        return true;
         return User::find(auth()->user()->id)->Group->permission->show_pump == 'true';
     }
 

@@ -1,24 +1,17 @@
 <?php
 
-if (!function_exists('getServiceCount')) {
+if (!function_exists('getHomeCounts')) {
     /**
      * @author Nader Ahmed
      * @return mixed
      */
-    function getServiceCount()
+    function getHomeCounts()
     {
-        return app(\Modules\Services\Repository\Interfaces\ServiceInterface::class)->getWhere([]);
-    }
-}
-
-if (!function_exists('getPageCount')) {
-    /**
-     * @author Nader Ahmed
-     * @return mixed
-     */
-    function getPageCount()
-    {
-        return app(\Modules\Pages\Repository\Interfaces\PageInterface::class)->getWhere([]);
+        $data['pumps'] =  app(\Modules\Pumps\Repository\Interfaces\PumpInterface::class)->getCount([]);
+        $data['users'] =  app(\Modules\Users\Repository\Interfaces\UserInterface::class)->getCount([]);
+        $data['cities'] =  app(\Modules\City\Repository\Interfaces\CityInterface::class)->getCount([]);
+        $data['settings'] =  app(\Modules\Setting\Repository\Interfaces\SettingInterface::class)->getCount([]);
+        return $data;
     }
 }
 

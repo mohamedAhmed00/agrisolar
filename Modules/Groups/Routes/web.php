@@ -12,7 +12,7 @@
 */
 
 Route::prefix('_admin_/groups')->middleware('auth')->group(function() {
-    Route::get('/', 'GroupsController@index')->middleware('can:create,Modules\Pumps\Entities\Pump');
+    Route::get('/', 'GroupsController@index')->middleware('can:create,Modules\Groups\Entities\Group');
     Route::get('/add', 'GroupsController@create')->name('group.create')->middleware('can:view,Modules\Groups\Entities\Group');
     Route::get('/profile', 'GroupsController@show')->name('group.show')->middleware('can:create,Modules\Groups\Entities\Group');
     Route::post('/store', 'GroupsController@store')->name('group.store')->middleware('can:create,Modules\Groups\Entities\Group');
