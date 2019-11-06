@@ -5,6 +5,7 @@ namespace Modules\Pumps\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use Modules\Media\Repository\Interfaces\MediaInterface;
 use Modules\Pumps\Http\Requests\PumpRequest;
 use Modules\Pumps\Repository\Interfaces\PumpInterface;
 
@@ -39,9 +40,10 @@ class PumpsController extends Controller
      * Show the form for creating a new resource.
      * @return Response
      */
-    public function create()
+    public function create(MediaInterface $media)
     {
-        return view('pumps::form');
+        $medias = $media->getAll();
+        return view('pumps::form',compact('medias'));
     }
 
     /**
@@ -51,7 +53,8 @@ class PumpsController extends Controller
      */
     public function store(PumpRequest $request)
     {
-        $this->pumpRepository->store($request->all());
+        $pump = $this->pumpRepository->store($request->all());
+        $this->pumpRepository->saveMedia($pump,$request->get('media'),$request->get('order'));
         \request()->session()->put('successful',' pump is added successfully');
         return redirect('_admin_/pumps');
     }
@@ -70,10 +73,12 @@ class PumpsController extends Controller
      * @param int $id
      * @return Response
      */
-    public function edit(int $id)
+    public function edit(int $id,MediaInterface $media)
     {
+        $medias = $media->getAll();
         $pump = $this->pumpRepository->getById($id);
-        return view('pumps::form',compact('pump'));
+        $selectedPumps = json_decode(json_encode($this->pumpRepository->getMedia($id)),true);
+        return view('pumps::form',compact(['pump','medias','selectedPumps']));
     }
 
     /**
@@ -84,6 +89,8 @@ class PumpsController extends Controller
     public function update(int $id,PumpRequest $request)
     {
         $this->pumpRepository->update($id,$request->all());
+        $pump = $this->pumpRepository->getById($id);
+        $this->pumpRepository->saveMedia($pump,$request->get('media'),$request->get('order'));
         \request()->session()->put('successful','pump is edited successfully');
         return redirect('_admin_/pumps');
     }

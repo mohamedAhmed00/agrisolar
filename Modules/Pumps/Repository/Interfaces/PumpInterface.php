@@ -14,15 +14,35 @@ interface PumpInterface extends BaseInterface
     public function search(array $arg);
 
     /**
-     * @param int $id
+     * @param $request
      * @return Mixed
      * @author Nader Ahmed
      */
-    public function getChart(int $id);
+    public function getChart( $request);
 
     /**
      * @return Mixed
      * @author Nader Ahmed
      */
     public function getChartWithSearch();
+
+    /**
+     * @param $request
+     * @author Nader Ahmed
+     */
+    public function generatePDF( $request);
+
+    /**
+     * @param $pump
+     * @param $order
+     * @param $media
+     * @author Nader Ahmed
+     */
+    public function saveMedia( $pump,$media,$order);
+
+    /**
+     * @param $pump_id
+     * @author Nader Ahmed
+     */
+    public function getMedia($pump_id);
 }

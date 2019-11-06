@@ -2,6 +2,7 @@
 
 namespace Modules\Pumps\Repository\Elequent;
 
+use Illuminate\Support\Facades\DB;
 use Modules\Base\Repository\Elequent\BaseElequent;
 use Modules\Pumps\Entities\HeightPumps;
 use Modules\Pumps\Repository\Interfaces\HeightPumpsInterface;
@@ -52,6 +53,25 @@ class HeightPumpsElequent extends BaseElequent implements HeightPumpsInterface
 
         }
         return $data;
+    }
+
+    /**
+     * @param int $pump_id
+     * @param  $head
+     * @author Nader Ahemd
+     * @return Mixed
+     */
+    public function getHead(int $pump_id,$head)
+    {
+        $data = DB::select( DB::raw("
+        SELECT *
+FROM `height_pumps`
+WHERE `pump_id` = " . $pump_id ."
+  AND (`head` in (SELECT min(`head`) FROM `height_pumps` WHERE `head` >= " . $head ." AND `pump_id` = " . $pump_id .")
+    or (`head` in (SELECT MAX(`head`) FROM `height_pumps` WHERE `head` <= " . $head ." AND `pump_id` = " . $pump_id .")))
+LIMIT 1;
+"));
+        return $this->preparePoints($data);
     }
 }
 

@@ -4,6 +4,7 @@ namespace Modules\FrontEnd\Http\Controllers;
 
 
 use Auth;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Input;
 use Modules\City\Repository\Interfaces\CityInterface;
@@ -14,6 +15,8 @@ use Modules\FrontEnd\Http\Requests\MonthSearchRequest;
 use Modules\FrontEnd\Http\Requests\RegisterRequest;
 use Modules\FrontEnd\Http\Requests\SearchRequest;
 use Modules\Groups\Repository\Interfaces\GroupInterface;
+use Modules\Module\Repository\Interfaces\ModuleInterface;
+use Modules\Pumps\Repository\Interfaces\HeightPumpsInterface;
 use Modules\Pumps\Repository\Interfaces\PumpInterface;
 use Modules\Users\Repository\Interfaces\UserInterface;
 
@@ -46,14 +49,16 @@ class FrontEndController extends Controller
      * @param GroupInterface $groupRepository
      * @param PumpInterface $pumpRepository
      * @param CityInterface $cityRepository
+     * @param ModuleInterface $module
      * @author Nader Ahmed
      */
-    public function __construct(UserInterface $userRepository, GroupInterface $groupRepository, PumpInterface $pumpRepository, CityInterface $cityRepository)
+    public function __construct(UserInterface $userRepository, GroupInterface $groupRepository, PumpInterface $pumpRepository, CityInterface $cityRepository,ModuleInterface $module)
     {
         $this->cityRepository = $cityRepository;
         $this->userRepository = $userRepository;
         $this->groupRepository = $groupRepository;
         $this->pumpRepository = $pumpRepository;
+        $this->module = $module;
     }
 
     /**
@@ -80,8 +85,10 @@ class FrontEndController extends Controller
      */
     public function dashboard()
     {
+        $existingPumps = $this->pumpRepository->getAll();
         $cities = $this->cityRepository->getAll();
-        return view('frontend::dashboard', compact('cities'));
+        $modules = $this->module->getAll();
+        return view('frontend::dashboard', compact(['cities','modules','existingPumps']));
     }
 
     /**
@@ -164,8 +171,10 @@ class FrontEndController extends Controller
     {
         $cities = $this->cityRepository->getAll();
         $pumps = $this->pumpRepository->search($request->all());
+        $modules = $this->module->getAll();
         $inputs = $request->all();
-        return view('frontend::dashboard', compact(['pumps', 'cities', 'inputs']));
+        $existingPumps = $this->pumpRepository->getAll();
+        return view('frontend::dashboard', compact(['pumps', 'cities', 'inputs','modules','existingPumps']));
     }
 
     /**
@@ -173,11 +182,12 @@ class FrontEndController extends Controller
      */
     public function pumpData(DataRequest $request)
     {
-        $data = $this->pumpRepository->getChart($request->get('id'));
+        $data = $this->pumpRepository->getChart($request);
         if (null == $data) {
             return response()->json(['error' => "incorrect data"], 200, []);
         }
-        return response(['chart' => $data['points'] , 'head' => $data['head'],'month' => $data['month']['points']], 200, []);
+        $row = array_search(true,array_column($data['pvgen_array'],'selected'));
+        return response(['avg'=> $data['avg'],'pvgen_array' => $data['pvgen_array'][$row],'chart' => $data['points'] , 'head' => $data['head'],'month' => $data['month']['points']], 200, []);
     }
 
     /**
@@ -189,15 +199,37 @@ class FrontEndController extends Controller
         if (null == $data) {
             return response()->json(['error' => "incorrect data"], 200, []);
         }
-        return response(['chart' => $data], 200, []);
+        $row = array_search(true,array_column($data['pvgen_array'],'selected'));
+        $data['year'][] = array('avg' , $data['avg']);
+        return response(['avg'=> $data['avg'],'chart' => $data,'pvgen_array' => $data['pvgen_array'][$row]], 200, []);
     }
 
     public function monthChart(MonthSearchRequest $request)
     {
-        $data = $this->pumpRepository->getMonthChart($request->get('mounting_structure'),$request->get('id'),$request->get('month'));
-        if (null == $data) {
+        $monthPoints = $this->pumpRepository->getMonthChart($request->get('mounting_structure'),$request->get('id'),$request->get('month'));
+        if (null == $monthPoints) {
             return response()->json(['error' => "incorrect data"], 200, []);
         }
-        return response(['chart' => $data], 200, []);
+//        $avgMonth = 0;
+        foreach ($monthPoints['points'] as $key => $monthPoint){
+//            $avgMonth += $monthPoint;
+            $arr['month']['points'][] = array($key , $monthPoint);
+        }
+//        $arr['month']['points'][] = array('avg',round($avgMonth/count($arr['month']['points']),2));
+
+        return response(['chart' => $arr['month']['points']], 200, []);
+    }
+
+    public function getPDF(Request $request,HeightPumpsInterface $heightPumpsRepository){
+
+        $data = $this->pumpRepository->generatePDF($request);
+        $heightPumps = $heightPumpsRepository->getHead($data['model']->id,$request->get('dynamic_head'));
+        $heightPumps = is_array($heightPumps)? $heightPumps[0] : $heightPumps;
+        return view('frontend::getPDF',compact(['data','heightPumps']));
+    }
+
+    public function download($path){
+        $headers = ['Content-Type: application/pdf'];
+        return response()->download($path);
     }
 }

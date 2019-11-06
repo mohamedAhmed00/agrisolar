@@ -133,9 +133,9 @@
         </div>
     </div>
 
-    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
-    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-gl/echarts-gl.min.js"></script>
-    <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
+    <script type="text/javascript" src="{{ asset('agrisolar/js/echarts.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('agrisolar/js/echarts-gl.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('agrisolar/js/ecStat.min.js') }}"></script>
     <script>
         function showGraph(collection) {
             $('.bs-example-modal-lg').modal('show');

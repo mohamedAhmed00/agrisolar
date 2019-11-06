@@ -2,6 +2,7 @@
 
 namespace Modules\Pumps\Entities;
 use Eloquent;
+use Modules\Media\Entities\Media;
 
 class Pump extends Eloquent
 {
@@ -17,5 +18,9 @@ class Pump extends Eloquent
 
     public function Head(){
         return $this->hasMany(HeightPumps::class);
+    }
+
+    public function getMedias(){
+        return $this->belongsToMany(Media::class,'media_pump','pump_id','media_id')->orderBy('order','asc');
     }
 }

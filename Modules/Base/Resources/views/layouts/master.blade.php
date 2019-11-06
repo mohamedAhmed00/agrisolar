@@ -157,6 +157,8 @@
                         <li class="header">MAIN MENU</li>
                         <li class="treeview active"><a href="{{ url('_admin_/base') }}"><i class="fa fa-home"></i> <span>Dashboard</span></a></li>
                         <li class="treeview"><a href="{{ url('_admin_/city') }}"><i class="fa fa-location-arrow"></i> <span>Cities</span></a></li>
+                        <li class="treeview"><a href="{{ url('_admin_/cable') }}"><i class="fa fa-line-chart"></i> <span>cables</span></a></li>
+                        <li class="treeview"><a href="{{ url('_admin_/media') }}"><i class="fa fa-image"></i> <span>Pump Images</span></a></li>
 
                         @can('view', Modules\Pumps\Entities\Pump::class)
                             <li class="treeview"><a href="{{ url('_admin_/pumps') }}"><i class="fa fa-bookmark"></i> <span>Pumps</span></a></li>
